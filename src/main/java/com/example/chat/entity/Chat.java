@@ -21,7 +21,7 @@ public class Chat {
     
     @PrimaryKeyColumn(type = PrimaryKeyType.PARTITIONED)
     private UUID id = Uuids.timeBased();
-    private UUID from_id;
-    private UUID to_id;
+    private UUID fromId;
+    private UUID toId;
 
 }

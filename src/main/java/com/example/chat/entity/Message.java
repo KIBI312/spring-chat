@@ -21,9 +21,9 @@ public class Message {
     
     @PrimaryKeyColumn(type = PrimaryKeyType.PARTITIONED)
     private UUID id = Uuids.timeBased();
-    private UUID chat_id;
-    private UUID from_id;
-    private UUID to_id;
+    private UUID chatId;
+    private UUID fromId;
+    private UUID toId;
     @PrimaryKeyColumn(type = PrimaryKeyType.CLUSTERED)
     @CassandraType(type = Name.TIMESTAMP)
     private String timestamp;

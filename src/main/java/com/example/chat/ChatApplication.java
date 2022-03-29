@@ -19,15 +19,15 @@ public class ChatApplication {
 	// public PasswordEncoder passwordEncoder;
 
 
-	@Bean
-	public CommandLineRunner dataLoader(UserRepository repo, PasswordEncoder passwordEncoder) {
-		return new CommandLineRunner() {
-			@Override
-			public  void run(String... args) throws Exception {
-				repo.save(new User("test@test.su", "test", passwordEncoder.encode("test")));
-				repo.save(new User("test@test.su", "test1", passwordEncoder.encode("test1")));
-			}
-		};
-	}
+	// @Bean
+	// public CommandLineRunner dataLoader(UserRepository repo, PasswordEncoder passwordEncoder) {
+	// 	return new CommandLineRunner() {
+	// 		@Override
+	// 		public  void run(String... args) throws Exception {
+	// 			repo.save(new User("test@test.su", "test", passwordEncoder.encode("test")));
+	// 			repo.save(new User("test@test.su", "test1", passwordEncoder.encode("test1")));
+	// 		}
+	// 	};
+	// }
 
 }
