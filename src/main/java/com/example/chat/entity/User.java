@@ -17,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
@@ -28,9 +27,9 @@ public class User implements UserDetails {
     @PrimaryKeyColumn(type = PrimaryKeyType.PARTITIONED)
     private UUID id = Uuids.timeBased();
 
-    public final String email;
-    public final String username;
-    public final String password;
+    private final String email;
+    private final String username;
+    private final String password;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
