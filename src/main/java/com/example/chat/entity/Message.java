@@ -26,7 +26,6 @@ public class Message {
     private String fromUname;
     private String toUname;
     @PrimaryKeyColumn(type = PrimaryKeyType.CLUSTERED)
-    @CassandraType(type = Name.TIMESTAMP)
     private String timestamp;
     private String content;
 

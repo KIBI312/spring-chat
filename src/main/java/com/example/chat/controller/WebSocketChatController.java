@@ -2,6 +2,7 @@ package com.example.chat.controller;
 
 import com.example.chat.entity.Message;
 import com.example.chat.repository.MessageRepository;
+import com.example.chat.util.StringUtils;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class WebSocketChatController {
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
     private MessageRepository messageRepository;
 
 
@@ -32,13 +34,9 @@ public class WebSocketChatController {
     @MessageMapping("/ws")
     public void send(SimpMessageHeaderAccessor sha, @Payload Message message) throws Exception{
         String sender = sha.getUser().getName();
-        Message chatMessage = new Message(message.getChatId(),message.getFromUname(),
-                            message.getToUname(), message.getTimestamp(), message.getContent());
-        logger.debug(chatMessage.getFromUname()+"~"+chatMessage.getToUname()+"~"+chatMessage.getTimestamp());
+        Message chatMessage = new Message(message.getChatId(), sender,
+                            message.getToUname(), StringUtils.getCurrentTimestamp(), message.getContent());
         messageRepository.save(chatMessage);
-        if(!sender.equals(message.getToUname())){
-            simpMessagingTemplate.convertAndSendToUser(sender, "/queue/messages", chatMessage);
-        }
         simpMessagingTemplate.convertAndSendToUser(message.getToUname(), "/queue/messages", chatMessage);
     }
 }
