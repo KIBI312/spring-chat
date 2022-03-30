@@ -10,8 +10,8 @@ import org.springframework.data.cassandra.repository.CassandraRepository;
 public interface ChatRepository extends CassandraRepository<Chat, UUID> {
     
     Optional<Chat> findById(UUID id);
-    Optional<Chat> findByFromId(UUID id);
-    Optional<Chat> findByToId(UUID id);
+    Optional<Chat> findByFromUname(UUID id);
+    Optional<Chat> findByToUname(UUID id);
     
 
 }
