@@ -1,5 +1,8 @@
 package com.example.chat.entity;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.datastax.oss.driver.api.core.uuid.Uuids;
@@ -26,10 +29,11 @@ public class Message {
     private String fromUname;
     private String toUname;
     @PrimaryKeyColumn(type = PrimaryKeyType.CLUSTERED)
-    private String timestamp;
+    @CassandraType(type = Name.TIMESTAMP)
+    private LocalDateTime timestamp;
     private String content;
 
-    public Message(String timestamp) {
+    public Message(LocalDateTime timestamp) {
         this.timestamp = StringUtils.getCurrentTimestamp();
     }
 
