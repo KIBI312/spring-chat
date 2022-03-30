@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="input-group" id="sendmessage">
+        <input type="text" id="message" class="form-control" placeholder="Message">
+        <div class="input-group-append">
+            <button id="send" class="btn btn-primary" onclick="send()">Send</button>
+        </div>
+    </div>
+    <span th:text ="${#authentication.getPrincipal().getUsername()}" id="currentuser" style="display: none"></span>
+
+    <script th:src="@{/webjars/sockjs-client/1.1.2/sockjs.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/stomp-websocket/2.3.3/stomp.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/jquery/3.6.0/jquery.js}" ></script>
+    <script type="text/javascript">
+    var stompClient = null;
+    var username = $("#currentuser").val();
+    var socket = new SockJS('/ws');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/user/queue/messages', function (output) {
+            });
+        });
+        
+        function send() {
+                var content = $("#message").val();
+                console.log(content);
+                console.log(username);
+                stompClient.send("/chat/ws", {'sender': username},
+                        JSON.stringify({'chatId': "123e4567-e89b-12d3-a456-556642440000",
+                        'toUname': "test1",
+                        'content': content}));                
+                $("#message").val("");
+        }
+            
+ 
+    </script>
+</body>
+</html>

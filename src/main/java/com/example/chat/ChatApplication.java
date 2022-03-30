@@ -16,7 +16,7 @@ public class ChatApplication {
 		SpringApplication.run(ChatApplication.class, args);
 	}
  
-	// public PasswordEncoder passwordEncoder;
+	public PasswordEncoder passwordEncoder;
 
 
 	@Bean
