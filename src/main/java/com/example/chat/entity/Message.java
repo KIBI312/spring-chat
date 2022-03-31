@@ -1,7 +1,5 @@
 package com.example.chat.entity;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -23,8 +21,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table("messages")
 public class Message {
+    private UUID id = Uuids.timeBased();
     @PrimaryKeyColumn(type = PrimaryKeyType.PARTITIONED)
-    private final UUID id = Uuids.timeBased();
     private UUID chatId;
     private String fromUname;
     private String toUname;
@@ -37,4 +35,15 @@ public class Message {
         this.timestamp = StringUtils.getCurrentTimestamp();
     }
 
+    public Message(UUID id) {
+        this.id = id;
+    }
+    
+    public Message(UUID chatId, String fromUname, String toUname, LocalDateTime timestamp, String content) {
+        this.chatId = chatId;
+        this.fromUname = fromUname;
+        this.toUname = toUname;
+        this.timestamp = timestamp;
+        this.content = content;
+    }
 }
