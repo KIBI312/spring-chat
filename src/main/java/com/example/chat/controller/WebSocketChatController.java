@@ -1,9 +1,7 @@
 package com.example.chat.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.LogRecord;
 
 import com.example.chat.entity.Chat;
 import com.example.chat.entity.Message;
