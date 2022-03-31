@@ -6,9 +6,10 @@ import java.util.UUID;
 import com.example.chat.entity.Message;
 
 import org.springframework.data.cassandra.repository.CassandraRepository;
+import org.springframework.data.cassandra.repository.Query;
 
 public interface MessageRepository extends CassandraRepository<Message, UUID> {
-    
-    List<Message> findByChatId(UUID id);
+    @Query(allowFiltering=true)
+    List<Message> findByChatIdOrderByTimestampDesc(UUID id);
 
 }

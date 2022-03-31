@@ -40,7 +40,7 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
             .defaultSuccessUrl("/success", true)
             .and()
             .logout()
-            .logoutUrl("/perform_logout")
+            .logoutUrl("/logout")
             .deleteCookies("JSESSIONID");
     }
 
