@@ -54,8 +54,8 @@ public class WebSocketChatController {
     }
 
     @MessageMapping("/ws")
-    public void send(SimpMessageHeaderAccessor sha, @Payload Message message) throws Exception{
-        String fromUname = sha.getUser().getName();
+    public void send(SimpMessageHeaderAccessor headerAccessor, @Payload Message message) throws Exception{
+        String fromUname = headerAccessor.getUser().getName();
         if(chatRepository.findByFromUnameAndToUname(fromUname, message.getToUname()) == null) {
             if(fromUname.equals(message.getToUname())){
                 Chat chat = new Chat(fromUname, message.getToUname());
