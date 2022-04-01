@@ -22,13 +22,12 @@ public class UserInterceptor implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor stompHeaderAccessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-
         if(StompCommand.CONNECT.equals(stompHeaderAccessor.getCommand())) {
             Object raw = message.getHeaders().get(SimpMessageHeaderAccessor.NATIVE_HEADERS);
             if(raw instanceof Map) {
                 Object name = ((Map) raw).get("username");
                 if(name instanceof ArrayList) {
-                    logger.debug("New user principal assigned");
+                    logger.info("New user principal assigned");
                     stompHeaderAccessor.setUser(new User(((ArrayList) name).get(0).toString()));
                 }
             }

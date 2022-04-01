@@ -59,6 +59,7 @@ public class WebSocketChatController {
         if(chatRepository.findByFromUnameAndToUname(fromUname, message.getToUname()) == null) {
             if(fromUname.equals(message.getToUname())){
                 Chat chat = new Chat(fromUname, message.getToUname());
+                logger.error(fromUname+"~"+message.getToUname());
                 chatRepository.save(chat);
             } else {
                 logger.error(fromUname+"~"+message.getToUname());
