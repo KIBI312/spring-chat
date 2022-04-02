@@ -1,61 +1,18 @@
 package com.example.chat.entity;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.UUID;
+import java.security.Principal;
 
-import com.datastax.oss.driver.api.core.uuid.Uuids;
-
-import org.springframework.data.annotation.PersistenceConstructor;
-import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
-import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
-import org.springframework.data.cassandra.core.mapping.Table;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
-@Table("users")
-public class User implements UserDetails {
-
+public class User implements Principal{
     
-    @PrimaryKeyColumn(type = PrimaryKeyType.PARTITIONED)
-    private UUID id = Uuids.timeBased();
+    String name;
 
-    private final String email;
-    private final String username;
-    private final String password;
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
-    }
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-    @Override
-    public boolean isEnabled() {
-        return true;
+    public User(String name) {
+        this.name = name;
     }
 
-    @PersistenceConstructor 
-    public User(String email, String username, String password){
-        this.email = email;
-        this.username = username;
-        this.password = password;
+    @Override
+    public String getName() {
+        return name;
     }
 
 }
