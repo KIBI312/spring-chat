@@ -1,15 +1,10 @@
 package com.example.chat.entity;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import java.sql.Timestamp;
 
 import lombok.Data;
 import lombok.AccessLevel;
@@ -35,16 +30,23 @@ public class Message {
     private String timestamp;
     @Column(name = "message", columnDefinition = "mediumtext COLLATE utf8_unicode_ci NOT NULL")
     private String content;
+    @Column(name = "status", columnDefinition = "enum('unread','read') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unread'")
+    private Status status;
+
+    public static enum Status {
+        read, unread
+    }
 
     public Message(Long id) {
         this.id = id;
     }
     
-    public Message(Long chatId, String fromUname, String toUname, String timestamp, String content) {
+    public Message(Long chatId, String fromUname, String toUname, String timestamp, String content, Status status) {
         this.chatId = chatId;
         this.fromUname = fromUname;
         this.toUname = toUname;
         this.timestamp = timestamp;
         this.content = content;
+        this.status = status;
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.chat.entity.Chat;
 import com.example.chat.entity.Message;
+import com.example.chat.entity.Message.Status;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.MessageRepository;
 import com.example.chat.util.DateTimeUtil;
@@ -70,7 +71,7 @@ public class WebSocketChatController {
         }
         Chat currentChat = chatRepository.findByFromUnameAndToUname(fromUname, message.getToUname());
         Message chatMessage = new Message(currentChat.getId(), fromUname,
-                            message.getToUname(), DateTimeUtil.getCurrentTimestamp(), message.getContent());
+                            message.getToUname(), DateTimeUtil.getCurrentTimestamp(), message.getContent(), Status.unread);
         messageRepository.save(chatMessage);
         simpMessagingTemplate.convertAndSendToUser(message.getToUname(), "/queue/messages", chatMessage);
     }
