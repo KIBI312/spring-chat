@@ -3,43 +3,44 @@ package com.example.chat.entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.datastax.oss.driver.api.core.uuid.Uuids;
-import com.example.chat.util.StringUtils;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
-import org.springframework.data.cassandra.core.mapping.CassandraType;
-import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
-import org.springframework.data.cassandra.core.mapping.Table;
-import org.springframework.data.cassandra.core.mapping.CassandraType.Name;
+import java.sql.Timestamp;
 
 import lombok.Data;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 @AllArgsConstructor
-@Table("messages")
+@Entity
 public class Message {
-    private UUID id = Uuids.timeBased();
-    @PrimaryKeyColumn(type = PrimaryKeyType.PARTITIONED)
-    private UUID chatId;
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(nullable = false, columnDefinition = "int(11) NOT NULL")
+    private Long id;
+    @Column(name = "message_id", nullable = false, columnDefinition = "int(11) NOT NULL DEFAULT '0'")
+    private Long chatId;
+    @Column(name = "from_user_id", nullable = false, columnDefinition = "int(11) NOT NULL")
     private String fromUname;
+    @Column(name = "to_user_id", nullable = false, columnDefinition = "int(11) NOT NULL")
     private String toUname;
-    @PrimaryKeyColumn(type = PrimaryKeyType.CLUSTERED)
-    @CassandraType(type = Name.TIMESTAMP)
-    private LocalDateTime timestamp;
+    @Column(name = "created_at", nullable = false, columnDefinition = "DATETIME")
+    private String timestamp;
+    @Column(name = "message", columnDefinition = "mediumtext COLLATE utf8_unicode_ci NOT NULL")
     private String content;
 
-    public Message(LocalDateTime timestamp) {
-        this.timestamp = StringUtils.getCurrentTimestamp();
-    }
-
-    public Message(UUID id) {
+    public Message(Long id) {
         this.id = id;
     }
     
-    public Message(UUID chatId, String fromUname, String toUname, LocalDateTime timestamp, String content) {
+    public Message(Long chatId, String fromUname, String toUname, String timestamp, String content) {
         this.chatId = chatId;
         this.fromUname = fromUname;
         this.toUname = toUname;

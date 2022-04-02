@@ -1,13 +1,12 @@
 package com.example.chat.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.example.chat.entity.Chat;
 import com.example.chat.entity.Message;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.MessageRepository;
-import com.example.chat.util.StringUtils;
+import com.example.chat.util.DateTimeUtil;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +47,7 @@ public class WebSocketChatController {
             chatRepository.save(reverseChat);
         }
         Chat currentChat = chatRepository.findByFromUnameAndToUname(fromUname, toUname);
-        UUID chatId = currentChat.getId();
+        Long chatId = currentChat.getId();
         List<Message> oldMessages = messageRepository.findByChatIdOrderByTimestampDesc(chatId);
         return ResponseEntity.ok(oldMessages);
     }
@@ -71,7 +70,7 @@ public class WebSocketChatController {
         }
         Chat currentChat = chatRepository.findByFromUnameAndToUname(fromUname, message.getToUname());
         Message chatMessage = new Message(currentChat.getId(), fromUname,
-                            message.getToUname(), StringUtils.getCurrentTimestamp(), message.getContent());
+                            message.getToUname(), DateTimeUtil.getCurrentTimestamp(), message.getContent());
         messageRepository.save(chatMessage);
         simpMessagingTemplate.convertAndSendToUser(message.getToUname(), "/queue/messages", chatMessage);
     }

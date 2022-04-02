@@ -1,15 +1,12 @@
 package com.example.chat.repository;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.example.chat.entity.Message;
 
-import org.springframework.data.cassandra.repository.CassandraRepository;
-import org.springframework.data.cassandra.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 
-public interface MessageRepository extends CassandraRepository<Message, UUID> {
-    @Query(allowFiltering=true)
-    List<Message> findByChatIdOrderByTimestampDesc(UUID id);
+public interface MessageRepository extends CrudRepository<Message, Long> {
+    List<Message> findByChatIdOrderByTimestampDesc(Long id);
 
 }
