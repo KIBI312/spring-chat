@@ -1,8 +1,15 @@
+
 spring:
-  data:
-    cassandra:
-      keyspaceName: ${DB_KEYSPACE:spring_cassandra}
-      contactPoints: ${DB_HOST:127.0.0.1}
-      port: ${DB_PORT:9042}
-      schemaAction: recreate
-      local-datacenter: datacenter1
+  datasource:
+    url: jdbc:mysql://localhost:3306/springdb
+    username: root
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        format_sql: true
+        id:
+          new_generator_mappings: false
