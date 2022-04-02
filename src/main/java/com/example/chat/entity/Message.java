@@ -32,19 +32,15 @@ public class Message {
     @Column(name = "to_user_id", nullable = false, columnDefinition = "int(11) NOT NULL")
     private String toUname;
     @Column(name = "created_at", nullable = false, columnDefinition = "DATETIME")
-    private LocalDateTime timestamp;
+    private String timestamp;
     @Column(name = "message", columnDefinition = "mediumtext COLLATE utf8_unicode_ci NOT NULL")
     private String content;
-
-    public Message(LocalDateTime timestamp) {
-        this.timestamp = LocalDateTime.now();
-    }
 
     public Message(Long id) {
         this.id = id;
     }
     
-    public Message(Long chatId, String fromUname, String toUname, LocalDateTime timestamp, String content) {
+    public Message(Long chatId, String fromUname, String toUname, String timestamp, String content) {
         this.chatId = chatId;
         this.fromUname = fromUname;
         this.toUname = toUname;
