@@ -2,6 +2,8 @@ package com.example.chat.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,12 +26,11 @@ public class Message {
     private Long chatId;
     @Column(name = "from_user_id", nullable = false, columnDefinition = "int(11) NOT NULL")
     private String fromUname;
-    @Column(name = "to_user_id", nullable = false, columnDefinition = "int(11) NOT NULL")
-    private String toUname;
     @Column(name = "created_at", nullable = false, columnDefinition = "DATETIME")
     private String timestamp;
     @Column(name = "message", columnDefinition = "mediumtext COLLATE utf8_unicode_ci NOT NULL")
     private String content;
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", columnDefinition = "enum('unread','read') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'unread'")
     private Status status;
 
@@ -41,10 +42,9 @@ public class Message {
         this.id = id;
     }
     
-    public Message(Long chatId, String fromUname, String toUname, String timestamp, String content, Status status) {
+    public Message(Long chatId, String fromUname, String timestamp, String content, Status status) {
         this.chatId = chatId;
         this.fromUname = fromUname;
-        this.toUname = toUname;
         this.timestamp = timestamp;
         this.content = content;
         this.status = status;

@@ -21,14 +21,11 @@ public class Chat {
     @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "message_id", nullable = false, columnDefinition = "int(11) NOT NULL")
     private Long id;
-    @Column(name = "from_user_id", nullable = false, columnDefinition = "int(11) NOT NULL")
-    private String fromUname;
-    @Column(name = "to_user_id", nullable = false, columnDefinition = "int(11) NOT NULL")
-    private String toUname;
+    @Column(name = "is_group", nullable = false, columnDefinition = "boolean")
+    private final Boolean isGroup;
 
-    public Chat(String fromUname, String toUname) {
-        this.fromUname = fromUname;
-        this.toUname = toUname;
+    public Chat(Boolean isGroup) {
+        this.isGroup = isGroup;
     }
 
 }
