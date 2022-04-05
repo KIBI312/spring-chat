@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.example.chat.entity.Chat;
 import com.example.chat.entity.Participant;
+import com.example.chat.exception.WrongValueException;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.ParticipantRepository;
 
@@ -32,6 +33,7 @@ public class ChatService {
     }
 
     public Chat createGroupChat(List<String> participants, String chatName) {
+        if(chatName.length()<4) throw new WrongValueException("Min length of chat name 4 chars"); 
         Chat chat = new Chat(chatName, true);
         chatRepository.save(chat);
         participants.forEach((p) -> {

@@ -8,6 +8,7 @@ import com.example.chat.dto.MessageDto;
 import com.example.chat.entity.Chat;
 import com.example.chat.entity.Message;
 import com.example.chat.entity.Message.Status;
+import com.example.chat.exception.WrongValueException;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.MessageRepository;
 import com.example.chat.service.ChatService;
@@ -16,6 +17,8 @@ import com.example.chat.util.DateTimeUtil;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -62,16 +65,27 @@ public class WebSocketChatController {
     }
 
     @PostMapping("/newchat")
-    public void createNewChat(@RequestBody GroupChatDto chat) {
-        logger.error(chat.getParticipants().toString());
-        chatService.createGroupChat(chat.getParticipants(), chat.getChatName());
+    public ResponseEntity<?> createNewChat(@RequestBody GroupChatDto chat) {
+        try {
+            chatService.createGroupChat(chat.getParticipants(), chat.getChatName());
+            return ResponseEntity.ok(chat);
+        }
+        catch(WrongValueException exc) {
+            return ResponseEntity.ok(exc.getMessage());
+        }
+        catch(DataIntegrityViolationException exc) {
+            return ResponseEntity.ok("Chat with this name already exists");
+        }
     }
 
-    @PostMapping("/chatid")
-    public String getChatId(@RequestBody String chatName) {
-        logger.error(chatName);
-        Long chatId = chatRepository.findByChatName(chatName).getId();
-        return chatId.toString();
+    @PostMapping("/chatid/{chatName}")
+    public String getChatId(@PathVariable String chatName) {
+        try {
+            Long chatId = chatRepository.findByChatName(chatName).getId();
+            return chatId.toString();
+        } catch (NullPointerException e) {
+            return "Chat with this name doesnt exist";
+        }
     }
 
     @MessageMapping("/ws")
