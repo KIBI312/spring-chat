@@ -7,6 +7,6 @@ import com.example.chat.entity.Message;
 import org.springframework.data.repository.CrudRepository;
 
 public interface MessageRepository extends CrudRepository<Message, Long> {
-    List<Message> findTop10ByChatIdOrderByTimestampDesc(Long id);
+    List<Message> findTop30ByChatIdOrderByTimestampDesc(Long id);
 
 }

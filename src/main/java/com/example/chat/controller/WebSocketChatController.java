@@ -46,9 +46,10 @@ public class WebSocketChatController {
     private MessageService messageService;
 
 
-    @GetMapping("/messages/{chatId}")
-    public ResponseEntity<?> findChatMessages(@PathVariable Long chatId) {
-        List<Message> oldMessages = messageRepository.findTop10ByChatIdOrderByTimestampDesc(chatId);
+    @GetMapping("/messages/{fromUname}/{chatId}")
+    public ResponseEntity<?> findChatMessages(@PathVariable String fromUname,@PathVariable Long chatId) {
+        messageService.updateStatuses(chatId, fromUname);
+        List<Message> oldMessages = messageRepository.findTop30ByChatIdOrderByTimestampDesc(chatId);
         return ResponseEntity.ok(oldMessages);
     }
 
