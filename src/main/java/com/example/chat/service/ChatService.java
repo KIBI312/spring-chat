@@ -8,12 +8,18 @@ import com.example.chat.entity.Participant;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.ParticipantRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ChatService {
     
+ 
+    Logger logger = LoggerFactory.getLogger(ChatService.class);
+
+
     @Autowired
     ChatRepository chatRepository;
     @Autowired 
@@ -35,13 +41,21 @@ public class ChatService {
         return chat;
     }
 
-    public Chat createOnetoOneChat(String fromUname, String toUname) {
-        Chat chat = new Chat(String.format("%s_%s", fromUname, toUname), false);
-        Participant participantFrom = new Participant(chat, fromUname);
-        Participant participantTo = new Participant(chat, toUname);
-        participantRepository.save(participantFrom);
-        participantRepository.save(participantTo);
-        return chat;
+    public Long createOnetoOneIfNotExist(String fromUname, String toUname) {
+        String var1 = String.format("%s_%s", fromUname, toUname);
+        String var2 = String.format("%s_%s", toUname, fromUname);
+        logger.error(var1+"~"+var2);
+        if(chatRepository.findByChatName(var1)==null & chatRepository.findByChatName(var2)==null) {
+            Chat chat = new Chat(String.format("%s_%s", fromUname, toUname), false);
+            chatRepository.save(chat);
+            Participant participantFrom = new Participant(chat, fromUname);
+            Participant participantTo = new Participant(chat, toUname);
+            participantRepository.save(participantFrom);
+            participantRepository.save(participantTo);
+            return chat.getId();
+        } else if(chatRepository.findByChatName(var1)!=null) return chatRepository.findByChatName(var1).getId();
+        else return chatRepository.findByChatName(var2).getId();
+        
     }
 
 }

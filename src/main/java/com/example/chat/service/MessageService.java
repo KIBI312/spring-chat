@@ -21,7 +21,7 @@ public class MessageService {
     ChatRepository chatRepository;
 
     public List<Message> getMessages(Long chatId) {
-        return messageRepository.findByChatIdOrderByTimestampDesc(chatId);
+        return messageRepository.findTop10ByChatIdOrderByTimestampDesc(chatId);
     }
 
 }

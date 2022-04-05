@@ -3,7 +3,8 @@ package com.example.chat.controller;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.chat.dto.GroupChat;
+import com.example.chat.dto.GroupChatDto;
+import com.example.chat.dto.MessageDto;
 import com.example.chat.entity.Chat;
 import com.example.chat.entity.Message;
 import com.example.chat.entity.Message.Status;
@@ -45,27 +46,14 @@ public class WebSocketChatController {
     private MessageService messageService;
 
 
-    @GetMapping("/sockjs-message")
-    public String webSocketWithSockJs() {
-        return "sockjs-message";
+    @GetMapping("/messages/{chatId}")
+    public ResponseEntity<?> findChatMessages(@PathVariable Long chatId) {
+        List<Message> oldMessages = messageRepository.findTop10ByChatIdOrderByTimestampDesc(chatId);
+        return ResponseEntity.ok(oldMessages);
     }
 
-//     @GetMapping("/messages/{fromUname}/{toUname}")
-//     public ResponseEntity<?> findChatMessages(@PathVariable String fromUname, @PathVariable String toUname) {
-//         if(chatRepository.findByFromUnameAndToUname(fromUname, toUname) == null) {
-//             Chat chat = new Chat(fromUname, toUname);
-//             Chat reverseChat = new Chat(toUname, fromUname);
-//             chatRepository.save(chat);
-//             chatRepository.save(reverseChat);
-//         }
-//         Chat currentChat = chatRepository.findByFromUnameAndToUname(fromUname, toUname);
-//         Long chatId = currentChat.getId();
-//         List<Message> oldMessages = messageRepository.findByChatIdOrderByTimestampDesc(chatId);
-//         return ResponseEntity.ok(oldMessages);
-//     }
-
     @PostMapping("/newchat")
-    public void createNewChat(@RequestBody GroupChat chat) {
+    public void createNewChat(@RequestBody GroupChatDto chat) {
         logger.error(chat.getParticipants().toString());
         chatService.createGroupChat(chat.getParticipants(), chat.getChatName());
     }
@@ -78,13 +66,18 @@ public class WebSocketChatController {
     }
 
     @MessageMapping("/ws")
-    public void send(SimpMessageHeaderAccessor headerAccessor, @Payload Message message) throws Exception{
+    public void send(SimpMessageHeaderAccessor headerAccessor, @Payload MessageDto message) throws Exception{
         String fromUname = headerAccessor.getUser().getName();
-        Chat currentChat = chatRepository.findById(message.getChatId()).get();
-        Message chatMessage = new Message(currentChat.getId(), fromUname,
+        Long chatId;
+        if(message.getIsGroup()){
+            chatId = chatRepository.findByChatName(message.getToUname()).getId();
+        } else {
+            chatId = chatService.createOnetoOneIfNotExist(fromUname, message.getToUname());
+        }
+        Message chatMessage = new Message(chatId, fromUname,
                             DateTimeUtil.getCurrentTimestamp(), message.getContent(), Status.unread);
         messageRepository.save(chatMessage);
-        chatService.getChatParticipantIds(currentChat.getId()).stream().filter(p -> p != fromUname).forEach((p) -> {
+        chatService.getChatParticipantIds(chatId).stream().filter(p -> p != fromUname).forEach((p) -> {
             simpMessagingTemplate.convertAndSendToUser(p, "/queue/messages", chatMessage);
         });
     }
