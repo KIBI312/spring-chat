@@ -46,10 +46,18 @@ public class WebSocketChatController {
     private MessageService messageService;
 
 
-    @GetMapping("/messages/{fromUname}/{chatId}")
-    public ResponseEntity<?> findChatMessages(@PathVariable String fromUname,@PathVariable Long chatId) {
+    // @GetMapping("/messages/{fromUname}/{chatId}")
+    // public ResponseEntity<?> findChatMessages(@PathVariable String fromUname,@PathVariable Long chatId) {
+    //     messageService.updateStatuses(chatId, fromUname);
+    //     List<Message> oldMessages = messageRepository.findTop30ByChatIdOrderByTimestampDesc(chatId);
+    //     return ResponseEntity.ok(oldMessages);
+    // }
+
+
+    @GetMapping("/previous/{chatId}/{fromUname}/{pageId}")
+    public ResponseEntity<?> findPaginatedChatMessages(@PathVariable Long chatId, @PathVariable String fromUname,@PathVariable int pageId) {
         messageService.updateStatuses(chatId, fromUname);
-        List<Message> oldMessages = messageRepository.findTop30ByChatIdOrderByTimestampDesc(chatId);
+        List<Message> oldMessages = messageService.getPaginatedMessages(chatId, pageId);
         return ResponseEntity.ok(oldMessages);
     }
 
