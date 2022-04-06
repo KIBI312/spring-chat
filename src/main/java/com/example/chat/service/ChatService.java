@@ -55,8 +55,8 @@ public class ChatService {
             participantRepository.save(participantFrom);
             participantRepository.save(participantTo);
             return chat.getId();
-        } else if(chatRepository.findByChatName(var1)!=null) return chatRepository.findByChatName(var1).getId();
-        else return chatRepository.findByChatName(var2).getId();
+        } else if(chatRepository.findByChatName(var1)!=null) return chatRepository.findByChatName(var1).get().getId();
+        else return chatRepository.findByChatName(var2).get().getId();
         
     }
 

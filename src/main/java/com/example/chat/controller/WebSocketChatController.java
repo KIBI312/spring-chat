@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.apache.catalina.connector.Response;
 import org.slf4j.Logger;
 
 @RestController
@@ -59,9 +60,14 @@ public class WebSocketChatController {
 
     @GetMapping("/previous/{chatId}/{fromUname}/{pageId}")
     public ResponseEntity<?> findPaginatedChatMessages(@PathVariable Long chatId, @PathVariable String fromUname,@PathVariable int pageId) {
-        messageService.updateStatuses(chatId, fromUname);
-        List<Message> oldMessages = messageService.getPaginatedMessages(chatId, pageId);
-        return ResponseEntity.ok(oldMessages);
+        try {
+            messageService.updateStatuses(chatId, fromUname);
+            List<Message> oldMessages = messageService.getPaginatedMessages(chatId, pageId);
+            return ResponseEntity.ok(oldMessages);
+            
+        } catch (WrongValueException exc) {
+            return ResponseEntity.ok(exc.getMessage());
+        }
     }
 
     @PostMapping("/newchat")
@@ -79,29 +85,35 @@ public class WebSocketChatController {
     }
 
     @PostMapping("/chatid/{chatName}")
-    public String getChatId(@PathVariable String chatName) {
+    public ResponseEntity<?> getChatId(@PathVariable String chatName) {
         try {
-            Long chatId = chatRepository.findByChatName(chatName).getId();
-            return chatId.toString();
-        } catch (NullPointerException e) {
-            return "Chat with this name doesnt exist";
+            if(chatRepository.findByChatName(chatName).isEmpty()) throw new WrongValueException("Chat with this name doesnt exist");
+            Chat chat = chatRepository.findByChatName(chatName).get();
+            return ResponseEntity.ok(chat);
+        } catch (WrongValueException exc) {
+            return ResponseEntity.ok(exc.getMessage());
         }
     }
 
     @MessageMapping("/ws")
     public void send(SimpMessageHeaderAccessor headerAccessor, @Payload MessageDto message) throws Exception{
-        String fromUname = headerAccessor.getUser().getName();
-        Long chatId;
-        if(message.getIsGroup()){
-            chatId = chatRepository.findByChatName(message.getToUname()).getId();
-        } else {
-            chatId = chatService.createOnetoOneIfNotExist(fromUname, message.getToUname());
+        try {
+            String fromUname = headerAccessor.getUser().getName();
+            Long chatId;
+            if(message.getIsGroup()){
+                if(chatRepository.findByChatName(message.getToUname()).isEmpty()) throw new WrongValueException("Chat with this name doesnt exist");
+                chatId = chatRepository.findByChatName(message.getToUname()).get().getId();
+            } else {
+                chatId = chatService.createOnetoOneIfNotExist(fromUname, message.getToUname());
+            }
+            Message chatMessage = new Message(chatId, fromUname,
+                                DateTimeUtil.getCurrentTimestamp(), message.getContent(), Status.unread);
+            messageRepository.save(chatMessage);
+            chatService.getChatParticipantIds(chatId).stream().filter(p -> p != fromUname).forEach((p) -> {
+                simpMessagingTemplate.convertAndSendToUser(p, "/queue/messages", chatMessage);
+            });
+        } catch (WrongValueException exc) {
+            simpMessagingTemplate.convertAndSendToUser(headerAccessor.getUser().getName(), "/queue/messages", exc.getMessage());
         }
-        Message chatMessage = new Message(chatId, fromUname,
-                            DateTimeUtil.getCurrentTimestamp(), message.getContent(), Status.unread);
-        messageRepository.save(chatMessage);
-        chatService.getChatParticipantIds(chatId).stream().filter(p -> p != fromUname).forEach((p) -> {
-            simpMessagingTemplate.convertAndSendToUser(p, "/queue/messages", chatMessage);
-        });
     }
 }
