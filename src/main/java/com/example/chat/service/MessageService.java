@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.chat.entity.Message;
 import com.example.chat.entity.Message.Status;
+import com.example.chat.exception.WrongValueException;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.MessageRepository;
 import com.example.chat.repository.ParticipantRepository;
@@ -32,10 +33,12 @@ public class MessageService {
     }
 
     public void updateStatuses(Long chatId, String fromUname) {
+        if (chatRepository.findById(chatId).isEmpty()) throw new WrongValueException("Chat doesnt exist");
+        if (participantRepository.findByUnameIdAndChatId(fromUname, chatId).isEmpty()) throw new WrongValueException("User doesnt exist in provided chat");
         getMessages(chatId).stream().filter(m -> !m.getFromUname().equals(fromUname)).forEach((msg) -> {
             msg.setStatus(Status.read);
             messageRepository.save(msg);
-        });
+        }); 
     }
 
     public List<Message> getPaginatedMessages(Long chatId, int pageId) {
