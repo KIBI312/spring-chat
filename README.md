@@ -14,6 +14,9 @@ Create new group chat - /newchat
 
 Get Chat entity - /chatid/{chatName}
 
+# env vars
+DB_HOST ; DB_PORT ; DB_NAME ; DB_USER ; DB_PASSWORD ; APACHE_HOST
+
 # documentation
 
 For non-Stomp endpoints you can check swagger/openapi generated docs on /swagger-ui/index.html
