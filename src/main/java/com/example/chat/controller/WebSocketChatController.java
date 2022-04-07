@@ -77,12 +77,15 @@ public class WebSocketChatController {
         catch(WrongValueException exc) {
             return ResponseEntity.ok(exc.getMessage());
         }
+        catch(NumberFormatException exc) {
+            return ResponseEntity.ok("Unacceptable users id values");
+        }
         catch(DataIntegrityViolationException exc) {
             return ResponseEntity.ok("Chat with this name already exists");
         }
     }
 
-    @PostMapping("/chatid/{chatName}")
+    @GetMapping("/chatid/{chatName}")
     public ResponseEntity<?> getChatId(@PathVariable String chatName) {
         try {
             if(chatRepository.findByChatName(chatName).isEmpty()) throw new WrongValueException("Chat with this name doesnt exist");
