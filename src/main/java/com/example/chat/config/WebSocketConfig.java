@@ -2,6 +2,7 @@ package com.example.chat.config;
 
 import com.example.chat.util.UserInterceptor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -12,10 +13,12 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    @Value("${APACHE_HOST:dummy1.example.com}")
+    private String APACHE_HOST;
     
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws", "/wsg").setAllowedOrigins("http://localhost:7777").withSockJS();
+        registry.addEndpoint("/ws", "/wsg").setAllowedOrigins("http://"+APACHE_HOST).withSockJS();
     }
 
     @Override
