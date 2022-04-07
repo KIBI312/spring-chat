@@ -34,6 +34,7 @@ public class MessageService {
 
     public void updateStatuses(Long chatId, String fromUname) {
         if (chatRepository.findById(chatId).isEmpty()) throw new WrongValueException("Chat doesnt exist");
+        Integer intval = Integer.parseInt(fromUname);
         if (participantRepository.findByUnameIdAndChatId(fromUname, chatId).isEmpty()) throw new WrongValueException("User doesnt exist in provided chat");
         getMessages(chatId).stream().filter(m -> !m.getFromUname().equals(fromUname)).forEach((msg) -> {
             msg.setStatus(Status.read);

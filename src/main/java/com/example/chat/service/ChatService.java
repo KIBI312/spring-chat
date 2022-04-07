@@ -33,7 +33,10 @@ public class ChatService {
     }
 
     public Chat createGroupChat(List<String> participants, String chatName) {
-        if(chatName.length()<4) throw new WrongValueException("Min length of chat name 4 chars"); 
+        if(chatName.length()<4) throw new WrongValueException("Min length of chat name 4 chars");
+        participants.forEach((p) -> {
+            Integer intval = Integer.parseInt(p);
+        });
         Chat chat = new Chat(chatName, true);
         chatRepository.save(chat);
         participants.forEach((p) -> {
@@ -47,7 +50,7 @@ public class ChatService {
         String var1 = String.format("%s_%s", fromUname, toUname);
         String var2 = String.format("%s_%s", toUname, fromUname);
         logger.error(var1+"~"+var2);
-        if(chatRepository.findByChatName(var1)==null & chatRepository.findByChatName(var2)==null) {
+        if(chatRepository.findByChatName(var1).isEmpty() & chatRepository.findByChatName(var2).isEmpty()) {
             Chat chat = new Chat(String.format("%s_%s", fromUname, toUname), false);
             chatRepository.save(chat);
             Participant participantFrom = new Participant(chat, fromUname);
@@ -55,7 +58,7 @@ public class ChatService {
             participantRepository.save(participantFrom);
             participantRepository.save(participantTo);
             return chat.getId();
-        } else if(chatRepository.findByChatName(var1)!=null) return chatRepository.findByChatName(var1).get().getId();
+        } else if(chatRepository.findByChatName(var1).isPresent()) return chatRepository.findByChatName(var1).get().getId();
         else return chatRepository.findByChatName(var2).get().getId();
         
     }
